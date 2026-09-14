@@ -1,3 +1,5 @@
+# BEST SOLUTION: O(n * k) runtime, no sorting needed
+
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
         groups = {}
