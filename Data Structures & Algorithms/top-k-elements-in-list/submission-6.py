@@ -1,18 +1,25 @@
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
         
-        count = {}
-        result = []
+        # create dictionary to track how many times each number appears
+        freq_map = {}
+        # list to store our final answer
+        top_k = []
         
-        for i in nums:
-            if i in count:
-                count[i] += 1
+        # build the frequency map — count occurrences of each number
+        for num in nums:
+            if num in freq_map:
+                freq_map[num] += 1 # seen before, increment count
             else:
-                count[i] = 1
+                freq_map[num] = 1 # first time seeing this number
         
-        for j in range(k):
-            current_max = max(count, key=count.get)
-            result.append(current_max)
-            count.pop(current_max)
+        # repeat k times to find the k most frequent elements
+        for _ in range(k):
+            # find the key with the highest value (most occurrences) in freq_map
+            most_frequent = max(freq_map, key=freq_map.get)
+            # add it to our answer
+            top_k.append(most_frequent)
+            # remove it so the next max() finds the next most frequent
+            freq_map.pop(most_frequent)
         
-        return result
+        return top_k 
