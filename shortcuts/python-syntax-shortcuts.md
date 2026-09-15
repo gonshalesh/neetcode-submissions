@@ -217,6 +217,127 @@ lst = list(some_tuple)         # tuple → list
 
 ---
 
+## Set Manipulation
+
+```python
+# create an empty set — do NOT use {} because that creates a dictionary
+seen = set()
+
+# add and remove
+seen.add(value)
+seen.remove(value)              # crashes if value is missing
+seen.discard(value)             # does nothing if value is missing
+
+# check membership
+if value in seen:
+
+# number of unique values
+len(seen)
+
+# set operations
+common = set_a & set_b           # intersection: values in both
+combined = set_a | set_b        # union: values in either
+only_a = set_a - set_b          # values in set_a but not set_b
+```
+
+---
+
+## String Manipulation
+
+```python
+# strings can be indexed and sliced like lists, but cannot be changed in place
+char = word[0]
+last_char = word[-1]
+part = word[1:4]
+
+# loop through characters
+for char in word:
+
+# build a string from pieces
+characters = []
+characters.append(char)
+result = "".join(characters)
+
+# split and combine
+words = sentence.split(" ")
+sentence = " ".join(words)
+
+# useful checks
+if word.isdigit():             # every character is a digit
+if char.isalpha():             # character is a letter
+if word == word[::-1]:         # palindrome check
+
+# convert between cases
+word.lower()
+word.upper()
+```
+
+---
+
+## Range and Conditions
+
+```python
+# range stops BEFORE the second number
+range(5)                       # 0, 1, 2, 3, 4
+range(2, 5)                    # 2, 3, 4
+range(0, 10, 2)                # 0, 2, 4, 6, 8
+range(4, -1, -1)               # 4, 3, 2, 1, 0
+
+# combine conditions
+if 0 <= i < len(nums):         # i is a valid index
+if value in seen and value > 0:
+if not nums:                   # list is empty
+
+# conditional expression
+larger = a if a > b else b
+```
+
+---
+
+## Sorting and Custom Keys
+
+```python
+# sort a list of values
+nums.sort()
+
+# sort without changing the original list
+ordered = sorted(nums)
+
+# sort descending
+nums.sort(reverse=True)
+
+# sort by a value calculated from each item
+words.sort(key=len)
+ordered = sorted(words, key=len, reverse=True)
+
+# sort dictionary items by their values
+ordered = sorted(freq_map.items(), key=lambda pair: pair[1])
+```
+
+---
+
+## Stack and Heap Syntax
+
+```python
+# a list can act as a stack
+stack = []
+stack.append(value)             # push
+top = stack.pop()               # pop the last value
+top = stack[-1]                 # view the top without removing it
+
+# min heap: smallest value comes out first
+import heapq
+heap = []
+heapq.heappush(heap, value)
+smallest = heapq.heappop(heap)
+
+# max heap: store negatives because heapq is a min heap
+heapq.heappush(heap, -value)
+largest = -heapq.heappop(heap)
+```
+
+---
+
 ## Common Patterns from Your Solutions
 
 ```python
