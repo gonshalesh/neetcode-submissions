@@ -1,22 +1,17 @@
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        groups = {}
+        groups = {} # map each frequency signature to its anagram words
 
-        for word in strs:
-            # 1. Use a dictionary for the inventory (Works for ANY character)
-            inventory = {}
-            for char in word:
-                # No mapping needed! Just use the character itself as the key.
+        for word in strs: # process each word
+            inventory = {} # count each character; works for any character
+            for char in word: # use the character itself as the dictionary key
                 inventory[char] = inventory.get(char, 0) + 1
             
-            # 2. Sort the inventory items so anagrams match
-            # This handles "" perfectly (it just becomes an empty tuple)
-            key = tuple(sorted(inventory.items()))
+            key = tuple(sorted(inventory.items())) # sorted signature makes anagrams match
             
-            # 3. Standard Positive Logic
-            if key in groups:
+            if key in groups: # append to the existing anagram group
                 groups[key].append(word)
-            else:
+            else: # create a new anagram group
                 groups[key] = [word]
 
         return list(groups.values())

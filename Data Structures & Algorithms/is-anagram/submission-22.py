@@ -1,19 +1,15 @@
 class Solution:
     def isAnagram(self, s: str, t: str) -> bool:
         
-        # create an array with 26 "empty" indexes
-        count = [0] * 26
+        count = [0] * 26 # create an array with 26 "empty" indexes
 
-        # iterate through first string encoding each letter via it's ASCII value
-        for char1 in s:
+        for char1 in s: # encode each letter in the first string via its ASCII value
             count[ord(char1) - ord('a')] += 1
 
-        # repeat previous step with second string
-        for char2 in t:
+        for char2 in t: # subtract each letter in the second string
             count[ord(char2) - ord('a')] -= 1
 
-        # if both encodings match -> anagram
-        if all(i == 0 for i in count):
+        if all(i == 0 for i in count): # all zeroes means both encodings match
             return True
             
         return False

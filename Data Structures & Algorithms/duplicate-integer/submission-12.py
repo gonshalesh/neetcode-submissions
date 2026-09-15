@@ -1,14 +1,11 @@
 class Solution:
     def hasDuplicate(self, nums: List[int]) -> bool:
 
-        # create set to store seen integers
-        seen = set()
+        seen = set() # store integers that have already appeared
 
-        # iterate through array
-        for num in nums:
+        for num in nums: # iterate through the array
 
-            # if current number exists in our set
-            if num in seen:
+            if num in seen: # check whether the current number was already seen
                 return True # duplicate found
             else:
                 seen.add(num) # add the number to the set for future checks
