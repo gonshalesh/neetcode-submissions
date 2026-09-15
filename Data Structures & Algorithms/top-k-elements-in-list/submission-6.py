@@ -1,3 +1,5 @@
+# O(n * k) solution using some brute forcing
+
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
         
