@@ -1,4 +1,4 @@
-# Python Syntax Shortcuts for Leetcode
+﻿# Python Syntax Shortcuts for Leetcode
 
 ## Iterating Through a List
 
@@ -389,41 +389,180 @@ largest = -heapq.heappop(heap)
 
 ---
 
-## Common Patterns from Your Solutions
 
+## Patterns from Your Solutions
+
+---
+
+### "Have I seen this before?" — set membership
+*Used in: duplicate-integer, longest-consecutive*
 ```python
-# "have I seen this before?" — use a set
 seen = set()
-if num in seen:                # O(1) lookup
+if num in seen:    # O(1) — the whole point of a set
     return True
 seen.add(num)
+```
 
-# "how many times has this appeared?" — use a dict
+---
+
+### "How many times has this appeared?" — frequency map
+*Used in: top-k-elements*
+```python
 freq_map = {}
-freq_map[num] = freq_map.get(num, 0) + 1
+freq_map[num] = freq_map.get(num, 0) + 1  # safe even if key is missing
+```
 
-# "find the complement" — store what you've seen, check for what you need
+---
+
+### "Find the pair that adds up to target" — complement pattern
+*Used in: two-integer-sum*
+```python
+# store what you've seen; check if what you NEED is already there
 seen = {}
 diff = target - num
 if diff in seen:
     return [seen[diff], i]
 seen[num] = i
+```
 
-# "group things by a shared property" — dict with list values
+---
+
+### "Group things that share a property" — dict of lists
+*Used in: anagram-groups*
+```python
 groups = {}
 if key not in groups:
     groups[key] = []
 groups[key].append(item)
-
-# "do something only once per loop" — underscore
-for _ in range(k):             # loop k times, don't need the counter
-
-# convert char to number and back
-# ord() gives the Unicode number for a character
-# chr() gives the character for a Unicode number
-# subtracting ord('a') normalizes so a=0, b=1, ..., z=25
-# this lets you use a character as an array index
-idx = ord('a')                   # 97
-char = chr(97)                   # 'a'
-position = ord('c') - ord('a')   # 2  (c is the 3rd letter, 0-indexed)
+return list(groups.values())
 ```
+
+---
+
+### "Fingerprint something for grouping" — char count as tuple key
+*Used in: anagram-groups, is-anagram*
+```python
+# lists can't be dict keys — convert to tuple first
+char_count = [0] * 26
+for char in word:
+    char_count[ord(char) - ord('a')] += 1
+fingerprint = tuple(char_count)   # now usable as a dict key
+```
+
+---
+
+### "Compare two strings by letter frequency" — count array cancel-out
+*Used in: is-anagram*
+```python
+count = [0] * 26
+for char in s:
+    count[ord(char) - ord('a')] += 1   # increment for first string
+for char in t:
+    count[ord(char) - ord('a')] -= 1   # decrement for second string
+return all(i == 0 for i in count)      # all zeros = same letters
+```
+
+---
+
+### "Product of everything except current index" — prefix/suffix pass
+*Used in: products-of-array-discluding-self*
+```python
+output = [1] * len(nums)
+
+prefix = 1
+for i in range(len(nums)):
+    output[i] = prefix        # store everything to the LEFT of i
+    prefix *= nums[i]
+
+suffix = 1
+for i in range(len(nums) - 1, -1, -1):
+    output[i] *= suffix       # multiply in everything to the RIGHT of i
+    suffix *= nums[i]
+```
+
+---
+
+### "Top k most frequent" — bucket sort by frequency
+*Used in: top-k-elements*
+```python
+# index of each bucket = frequency; max possible frequency = len(nums)
+buckets = [[] for _ in range(len(nums) + 1)]
+for num, freq in freq_map.items():
+    buckets[freq].append(num)
+
+result = []
+for i in range(len(buckets) - 1, -1, -1):     # highest frequency first
+    for num in buckets[i]:
+        result.append(num)
+        if len(result) == k:
+            return result
+```
+
+---
+
+### "Encode/decode a list of strings" — length-prefixed format
+*Used in: string-encode-and-decode*
+```python
+# encode: prepend each word with its length and a delimiter
+encoded = "".join(f"{len(word)}#{word}" for word in strs)
+
+# decode: read the length, jump past the delimiter, slice the word
+i = 0
+words = []
+while i < len(encoded):
+    j = encoded.index("#", i)              # find the next "#" starting from i
+    length = int(encoded[i:j])             # length is everything left of "#"
+    words.append(encoded[j+1:j+1+length]) # slice exactly that many chars
+    i = j + 1 + length                    # move i to the start of the next word
+```
+
+---
+
+### "Longest/largest sequence" — only start counting at boundaries
+*Used in: longest-consecutive*
+```python
+seen = set(nums)
+best = 0
+for num in seen:
+    if num - 1 not in seen:          # skip if this isn't a sequence start
+        length = 1
+        while num + length in seen:
+            length += 1
+        best = max(best, length)     # track running best across all sequences
+return best
+```
+
+---
+
+## Problem-Solving Decisions
+
+When you're stuck, ask these questions in order:
+
+**1. Do I need fast lookup?**
+→ Use `set` (membership only) or `dict` (membership + stored value). Never search a list.
+
+**2. Am I reprocessing duplicates?**
+→ Iterate `set(nums)` instead of `nums`, or add `if x in seen: continue`.
+
+**3. Is my loop overcounting?**
+→ Find the natural boundary and only act there (e.g. only start a sequence where `num - 1` doesn't exist).
+
+**4. Do I need the best result across all iterations?**
+→ Don't return early. Use a running variable: `best = max(best, current)`.
+
+**5. Does the answer depend on something I haven't seen yet?**
+→ Flip it: store what you've seen, check if what you *need* is already stored (complement pattern).
+
+**6. Am I computing something per-element that involves all other elements?**
+→ Think prefix/suffix: one forward pass builds left context, one backward pass builds right context.
+
+**7. Not sure which data structure?**
+
+| I need to... | Use |
+|---|---|
+| O(1) membership check | `set` |
+| O(1) lookup with stored data | `dict` |
+| group items by a shared key | `dict` of lists |
+| use a list as a dict key | `tuple(the_list)` |
+| process in reverse / track history | `stack` (list) |
+| repeatedly get min or max | `heap` |
